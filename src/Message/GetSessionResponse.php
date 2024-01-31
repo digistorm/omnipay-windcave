@@ -58,4 +58,12 @@ class GetSessionResponse extends AbstractResponse
 
         return isset($transaction[$key]) ? $transaction[$key] : null;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getTransactionReference()
+    {
+        return $this->getSessionId();
+    }
 }

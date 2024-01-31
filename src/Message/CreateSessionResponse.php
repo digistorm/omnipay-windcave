@@ -42,4 +42,12 @@ class CreateSessionResponse extends AbstractResponse
 
         return null;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getTransactionReference()
+    {
+        return $this->getSessionId();
+    }
 }

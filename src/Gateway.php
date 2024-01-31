@@ -3,7 +3,10 @@
 namespace Omnipay\Windcave;
 
 use Omnipay\Common\AbstractGateway;
+use Omnipay\Windcave\Message\CompleteSessionRequest;
+use Omnipay\Windcave\Message\CreateHppSessionRequest;
 use Omnipay\Windcave\Message\CreateSessionRequest;
+use Omnipay\Windcave\Message\GetHppSessionRequest;
 use Omnipay\Windcave\Message\GetSessionRequest;
 use Omnipay\Windcave\Message\PurchaseRequest;
 
@@ -151,5 +154,38 @@ class Gateway extends AbstractGateway
     public function getSession(array $parameters = array())
     {
         return $this->createRequest(GetSessionRequest::class, $parameters);
+    }
+
+    /**
+     * Complete a session.
+     *
+     * @param array $parameters
+     * @return \Omnipay\Windcave\Message\CompleteSessionRequest|\Omnipay\Common\Message\AbstractRequest
+     */
+    public function completeSession(array $parameters = array())
+    {
+        return $this->createRequest(CompleteSessionRequest::class, $parameters);
+    }
+
+    /**
+     * Create a Hosted Payment Page session.
+     *
+     * @param array $parameters
+     * @return \Omnipay\Windcave\Message\CreateHppSessionRequest|\Omnipay\Common\Message\AbstractRequest
+     */
+    public function createHppSession(array $parameters = array())
+    {
+        return $this->createRequest(CreateHppSessionRequest::class, $parameters);
+    }
+
+    /**
+     * Get a Hosted Payment Page session.
+     *
+     * @param array $parameters
+     * @return \Omnipay\Windcave\Message\GetHppSessionRequest|\Omnipay\Common\Message\AbstractRequest
+     */
+    public function getHppSession(array $parameters = array())
+    {
+        return $this->createRequest(GetHppSessionRequest::class, $parameters);
     }
 }
