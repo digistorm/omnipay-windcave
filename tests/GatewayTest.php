@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\Windcave\Test;
 
 use Money\Currencies\ISOCurrencies;
@@ -18,7 +20,7 @@ use Omnipay\Windcave\Message\PurchaseRequest;
  */
 class GatewayTest extends GatewayTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -26,7 +28,7 @@ class GatewayTest extends GatewayTestCase
         $this->gateway->setTestMode(true);
     }
 
-    public function testCreateSessionUsingStringAmount()
+    public function testCreateSessionUsingStringAmount(): void
     {
         $request = $this->gateway->createSession([
             'amount' => '10.00',
@@ -44,7 +46,7 @@ class GatewayTest extends GatewayTestCase
         $this->assertEquals('ABC123',  $data['merchantReference']);
     }
 
-    public function testCreateSessionUsingMoney()
+    public function testCreateSessionUsingMoney(): void
     {
         $request = $this->gateway->createSession([
             'currency' => 'AUD',
@@ -66,7 +68,7 @@ class GatewayTest extends GatewayTestCase
         $this->assertEquals('ABC123',  $data['merchantReference']);
     }
 
-    public function testGetSession()
+    public function testGetSession(): void
     {
         $request = $this->gateway->getSession([
             'sessionId' => 'SESS01234',
@@ -84,7 +86,7 @@ class GatewayTest extends GatewayTestCase
         $this->assertSame('https://sec.windcave.com/api/v1/sessions/SESS01234', $request->getEndpoint());
     }
 
-    public function testPurchase()
+    public function testPurchase(): void
     {
         $request = $this->gateway->purchase([
             'card' => new CreditCard([

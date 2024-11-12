@@ -1,11 +1,13 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Created by PhpStorm.
  * User: pedro
  * Date: 18/06/17
  * Time: 21:30
  */
-
 namespace Omnipay\Windcave\Test\Message;
 
 use Omnipay\Common\CreditCard;
@@ -14,12 +16,9 @@ use Omnipay\Windcave\Message\PurchaseRequest;
 
 class PurchaseRequestTest extends TestCase
 {
-    /**
-     * @var PurchaseRequest $request
-     */
-    private $request;
+    private PurchaseRequest $request;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->request = new PurchaseRequest($this->getHttpClient(), $this->getHttpRequest());
@@ -29,14 +28,14 @@ class PurchaseRequestTest extends TestCase
      * @expectedException \Omnipay\Common\Exception\InvalidRequestException
      * @expectedExceptionMessage You must pass a "card" parameter.
      */
-    public function testGetDataInvalid()
+    public function testGetDataInvalid(): void
     {
         $this->request->setCard(null);
 
         $this->request->getData();
     }
 
-    public function testGetDataWithCard()
+    public function testGetDataWithCard(): void
     {
         $card = $this->getValidCard();
         $this->request->setCard(new CreditCard($card));
@@ -48,10 +47,10 @@ class PurchaseRequestTest extends TestCase
 
         $data = $this->request->getData();
 
-        parse_str($data, $dataArray);
+        parse_str((string) $data, $dataArray);
 
         $expiryMonth = sprintf('%02d', $card['expiryMonth']);
-        $expiryYear = substr($card['expiryYear'], -2);
+        $expiryYear = substr((string) $card['expiryYear'], -2);
         $name = $card['firstName'] . ' ' . $card['lastName'];
 
         $this->assertEquals($card['number'],    $dataArray['CardNumber']);

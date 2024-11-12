@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\Windcave\Message;
 
 use Omnipay\Common\Exception\InvalidRequestException;
@@ -7,7 +9,7 @@ use Omnipay\Common\Message\RequestInterface;
 
 class PurchaseRequest extends AbstractRequest implements RequestInterface
 {
-    public function getData()
+    public function getData(): string
     {
         if (!$this->getParameter('card')) {
             throw new InvalidRequestException('You must pass a "card" parameter.');
@@ -15,8 +17,8 @@ class PurchaseRequest extends AbstractRequest implements RequestInterface
 
         $this->getCard()->validate();
 
-        $expiryMonth = str_pad($this->getCard()->getExpiryMonth(), 2, 0, STR_PAD_LEFT);
-        $expiryYear = substr($this->getCard()->getExpiryYear(), -2);
+        $expiryMonth = str_pad((string) $this->getCard()->getExpiryMonth(), 2, '0', STR_PAD_LEFT);
+        $expiryYear = substr((string) $this->getCard()->getExpiryYear(), -2);
 
         return http_build_query([
             'CardNumber' => $this->getCard()->getNumber(),
@@ -28,32 +30,34 @@ class PurchaseRequest extends AbstractRequest implements RequestInterface
         ]);
     }
 
-    public function getEndpoint()
+    public function getEndpoint(): string
     {
         return $this->getParameter('endpoint');
     }
 
-    public function setEndpoint($value)
+    public function setEndpoint(string $value): self
     {
         $this->setParameter('endpoint', $value);
+
+        return $this;
     }
 
-    public function getHttpMethod()
+    public function getHttpMethod(): string
     {
         return 'POST';
     }
 
-    public function getContentType()
+    public function getContentType(): string
     {
         return 'multipart/form-data';
     }
 
-    protected function wantsJson()
+    protected function wantsJson(): bool
     {
         return false;
     }
 
-    public function getResponseClass()
+    public function getResponseClass(): string
     {
         return PurchaseResponse::class;
     }

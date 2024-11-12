@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\Windcave\Test\Message;
 
 use Omnipay\Tests\TestCase;
@@ -10,7 +12,7 @@ use Omnipay\Windcave\Message\GetSessionResponse;
 
 class GetSessionResponseTest extends TestCase
 {
-    public function testSuccessResponse()
+    public function testSuccessResponse(): void
     {
         $request = new GetSessionRequest($this->getHttpClient(), $this->getHttpRequest());
         $responseBody = '
@@ -77,7 +79,7 @@ class GetSessionResponseTest extends TestCase
 
     }
 
-    public function testErrorResponse()
+    public function testErrorResponse(): void
     {
         $request = new GetSessionRequest($this->getHttpClient(), $this->getHttpRequest());
         $responseBody = '

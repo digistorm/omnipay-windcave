@@ -1,40 +1,52 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\Windcave\Message;
 
 class PurchaseResponse extends AbstractResponse
 {
-    public function isSuccessful()
+    public function isSuccessful(): bool
     {
         $code = $this->getHttpResponseCode();
 
-        return $code === 302 && $this->getStatus() === 'approved';
+        return $code === '302' && $this->getStatus() === 'approved';
     }
 
-    protected function getLocationAttribute($key)
+    protected function getLocationAttributeItem(string $key): bool|string|int|float|null
+    {
+        $item = $this->getLocationAttribute()[$key] ?? null;
+        if (!(is_scalar($item) || is_null($item))) {
+            throw new \InvalidArgumentException("Data item $key is not a scalar value");
+        }
+
+        return $item;
+    }
+
+    protected function getLocationAttribute(): ?array
     {
         $headers = $this->getHeaders();
         if (empty($headers['Location'][0])) {
             return null;
         }
 
-        $location = parse_url($headers['Location'][0], PHP_URL_QUERY);
-        parse_str($location, $query);
+        $location = parse_url((string) $headers['Location'][0], PHP_URL_QUERY);
+        parse_str((string) $location, $query);
 
-        return isset($query[$key]) ? $query[$key] : null;
+        return $query ?? null;
     }
 
-    public function getStatus()
+    public function getStatus(): ?string
     {
-        return $this->getLocationAttribute('status');
+        return (string) $this->getLocationAttributeItem('status');
     }
 
-    public function getSessionId()
+    public function getSessionId(): ?string
     {
-        return $this->getLocationAttribute('sessionId');
+        return (string) $this->getLocationAttributeItem('sessionId');
     }
 
-    public function getMessage()
+    public function getMessage(): string
     {
         return $this->getStatus();
     }

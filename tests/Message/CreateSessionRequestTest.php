@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\Windcave\Test\Message;
 
 use Money\Currency;
@@ -10,18 +12,18 @@ use Omnipay\Windcave\Message\CreateSessionRequest;
 class CreateSessionRequestTest extends TestCase
 {
     /**
-     * @var \Omnipay\Windcave\Message\CreateSessionRequest
+     * @var CreateSessionRequest
      */
     protected $request;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->request = new CreateSessionRequest($this->getHttpClient(), $this->getHttpRequest());
 
         $this->request->setMoney(new Money(1000, new Currency('NZD')));
     }
 
-    public function testEndpoint()
+    public function testEndpoint(): void
     {
         $this->request->setTestMode(true);
         $this->assertSame('https://uat.windcave.com/api/v1/sessions', $this->request->getEndpoint());
@@ -29,7 +31,7 @@ class CreateSessionRequestTest extends TestCase
         $this->assertSame('https://sec.windcave.com/api/v1/sessions', $this->request->getEndpoint());
     }
 
-    public function testGetData()
+    public function testGetData(): void
     {
         $this->request->setMerchantReference('ABC123');
 

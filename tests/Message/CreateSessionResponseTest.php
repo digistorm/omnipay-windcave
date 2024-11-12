@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\Windcave\Test\Message;
 
 use Omnipay\Tests\TestCase;
@@ -8,7 +10,7 @@ use Omnipay\Windcave\Message\CreateSessionResponse;
 
 class CreateSessionResponseTest extends TestCase
 {
-    public function testSuccessResponse()
+    public function testSuccessResponse(): void
     {
         $request = new CreateSessionRequest($this->getHttpClient(), $this->getHttpRequest());
         $responseBody = '
@@ -39,7 +41,7 @@ class CreateSessionResponseTest extends TestCase
         $this->assertEquals('https://sec.paymentexpress.com/pxmi3/E494B52F483B328E38A2D0EC9C9104A53891CD9F7DC26DF0BB9C2EBB0897F9855AEAF340A4A19600C', $response->getPurchaseUrl());
     }
 
-    public function testErrorResponse()
+    public function testErrorResponse(): void
     {
         $request = new CreateSessionRequest($this->getHttpClient(), $this->getHttpRequest());
         $responseBody = '

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\Windcave\Message;
 
 use Money\Currencies\ISOCurrencies;
@@ -14,15 +16,14 @@ use Omnipay\Common\Message\RequestInterface;
 class CreateSessionRequest extends AbstractRequest implements RequestInterface
 {
     /**
-     * @return string
      * @throws InvalidRequestException
      */
-    public function getData()
+    public function getData(): string
     {
         $data = [
             'type' => 'purchase',
             'currency' => $this->getCurrency(),
-            'merchantReference' => substr($this->getMerchantReference(), 0, 64),
+            'merchantReference' => substr((string) $this->getMerchantReference(), 0, 64),
             'storeCard' => 0,
             'callbackUrls' => $this->getCallbackUrls(),
         ];
@@ -35,28 +36,25 @@ class CreateSessionRequest extends AbstractRequest implements RequestInterface
             $data['amount'] = $this->getAmount();
         }
 
-        return json_encode($data);
+        return (string)json_encode($data);
     }
 
-    /**
-     * @return mixed
-     */
-    public function getEndpoint()
+    public function getEndpoint(): string
     {
         return $this->baseEndpoint() . '/sessions';
     }
 
-    public function getHttpMethod()
+    public function getHttpMethod(): string
     {
         return 'POST';
     }
 
-    public function getContentType()
+    public function getContentType(): string
     {
         return 'application/json';
     }
 
-    public function getResponseClass()
+    public function getResponseClass(): string
     {
         return CreateSessionResponse::class;
     }

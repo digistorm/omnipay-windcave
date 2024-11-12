@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\Windcave\Test\Message;
 
 use Omnipay\Tests\TestCase;
@@ -8,7 +10,7 @@ use Omnipay\Windcave\Message\PurchaseResponse;
 
 class PurchaseResponseTest extends TestCase
 {
-    public function testSuccessResponse()
+    public function testSuccessResponse(): void
     {
         $request = new PurchaseRequest($this->getHttpClient(), $this->getHttpRequest());
 
@@ -29,7 +31,7 @@ class PurchaseResponseTest extends TestCase
         $this->assertEquals('approved', $response->getStatus());
     }
 
-    public function testErrorResponse()
+    public function testErrorResponse(): void
     {
         $request = new PurchaseRequest($this->getHttpClient(), $this->getHttpRequest());
 
