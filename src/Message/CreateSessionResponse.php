@@ -8,7 +8,7 @@ class CreateSessionResponse extends AbstractResponse
 {
     /**
      * Is the transaction successful?
-     * @return boolean True if successful
+     * @return bool True if successful
      */
     public function isSuccessful(): bool
     {
@@ -25,12 +25,12 @@ class CreateSessionResponse extends AbstractResponse
 
     public function getSessionId(): ?string
     {
-        return (string)$this->getDataItem('id');
+        return (string) $this->getDataItem('id');
     }
 
     public function getState(): ?string
     {
-        return (string)$this->getDataItem('state');
+        return (string) $this->getDataItem('state');
     }
 
     public function getPurchaseUrl(): ?string

@@ -18,7 +18,7 @@ class CreateSessionRequest extends AbstractRequest implements RequestInterface
     /**
      * @throws InvalidRequestException
      */
-    public function getData(): string
+    public function getData(): array
     {
         $data = [
             'type' => 'purchase',
@@ -36,7 +36,7 @@ class CreateSessionRequest extends AbstractRequest implements RequestInterface
             $data['amount'] = $this->getAmount();
         }
 
-        return (string)json_encode($data);
+        return $data;
     }
 
     public function getEndpoint(): string

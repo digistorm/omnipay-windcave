@@ -33,7 +33,7 @@ class PurchaseResponse extends AbstractResponse
         $location = parse_url((string) $headers['Location'][0], PHP_URL_QUERY);
         parse_str((string) $location, $query);
 
-        return $query ?? null;
+        return $query;
     }
 
     public function getStatus(): ?string

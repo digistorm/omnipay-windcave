@@ -41,9 +41,9 @@ class GatewayTest extends GatewayTestCase
 
         $data = $request->getData();
 
-        $this->assertEquals('10.00',   $data['amount']);
-        $this->assertEquals('AUD',     $data['currency']);
-        $this->assertEquals('ABC123',  $data['merchantReference']);
+        $this->assertEquals('10.00', $data['amount']);
+        $this->assertEquals('AUD', $data['currency']);
+        $this->assertEquals('ABC123', $data['merchantReference']);
     }
 
     public function testCreateSessionUsingMoney(): void
@@ -63,9 +63,9 @@ class GatewayTest extends GatewayTestCase
 
         $data = $request->getData();
 
-        $this->assertEquals('10.00',   $data['amount']);
-        $this->assertEquals('AUD',     $data['currency']);
-        $this->assertEquals('ABC123',  $data['merchantReference']);
+        $this->assertEquals('10.00', $data['amount']);
+        $this->assertEquals('AUD', $data['currency']);
+        $this->assertEquals('ABC123', $data['merchantReference']);
     }
 
     public function testGetSession(): void
@@ -78,7 +78,7 @@ class GatewayTest extends GatewayTestCase
 
         $data = $request->getData();
 
-        $this->assertNull($data);
+        $this->assertEmpty($data);
 
         $request->setTestMode(true);
         $this->assertSame('https://uat.windcave.com/api/v1/sessions/SESS01234', $request->getEndpoint());
@@ -94,7 +94,7 @@ class GatewayTest extends GatewayTestCase
                 'lastName' => 'Doe',
                 'number' => '424242424242',
                 'expiryMonth' => '03',
-                'expiryYear' => '2020',
+                'expiryYear' => date('Y', strtotime('+1 year')),
                 'cvv' => '123',
             ]),
         ]);
@@ -102,10 +102,10 @@ class GatewayTest extends GatewayTestCase
         $this->assertInstanceOf(PurchaseRequest::class, $request);
         $data = $request->getData();
 
-        $this->assertEquals('424242424242',         $data['CardNumber']);
-        $this->assertEquals('John Doe',             $data['CardHolderName']);
-        $this->assertEquals('123',                  $data['Cvc2']);
-        $this->assertEquals('03',                   $data['ExpiryMonth']);
-        $this->assertEquals('20',                   $data['ExpiryYear']);
+        $this->assertEquals('424242424242', $data['CardNumber']);
+        $this->assertEquals('John Doe', $data['CardHolderName']);
+        $this->assertEquals('123', $data['Cvc2']);
+        $this->assertEquals('03', $data['ExpiryMonth']);
+        $this->assertEquals(date('y', strtotime('+1 year')), $data['ExpiryYear']);
     }
 }

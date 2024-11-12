@@ -16,7 +16,7 @@ class GetSessionRequest extends AbstractRequest implements RequestInterface
         return $this->getParameter('sessionId');
     }
 
-    public function setSessionId($value): ?string
+    public function setSessionId(string $value): self
     {
         return $this->setParameter('sessionId', $value);
     }

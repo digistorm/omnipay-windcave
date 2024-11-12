@@ -31,6 +31,6 @@ class GetSessionRequestTest extends TestCase
 
     public function testGetData(): void
     {
-        $this->assertNull($this->request->getData());
+        $this->assertEmpty($this->request->getData());
     }
 }

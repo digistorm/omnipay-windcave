@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Omnipay\Windcave;
 
-use Omnipay\Common\Message\RequestInterface;
-use Omnipay\Common\Message\AbstractRequest;
 use Omnipay\Common\AbstractGateway;
+use Omnipay\Common\Message\AbstractRequest;
+use Omnipay\Common\Message\RequestInterface;
 use Omnipay\Windcave\Message\CreateSessionRequest;
 use Omnipay\Windcave\Message\GetSessionRequest;
 use Omnipay\Windcave\Message\PurchaseRequest;
@@ -33,7 +33,6 @@ use Omnipay\Windcave\Message\PurchaseRequest;
  */
 class Gateway extends AbstractGateway
 {
-
     /**
      * Get gateway display name
      *
@@ -59,7 +58,7 @@ class Gateway extends AbstractGateway
 
     public function getDefaultParameters(): array
     {
-        return ['apiKey' => '', 'username'   => '', 'callbackUrls' => [
+        return ['apiKey' => '', 'username' => '', 'callbackUrls' => [
             'approved' => 'http://example.com?status=approved',
             'declined' => 'http://example.com?status=declined',
             'cancelled' => 'http://example.com?status=cancelled',
@@ -85,7 +84,7 @@ class Gateway extends AbstractGateway
     /**
      * Get Callback URLs associative array (approved, declined, cancelled)
      */
-    public function getCallbackUrls(): array
+    public function getCallbackUrls(): mixed
     {
         return $this->getParameter('callbackUrls');
     }
@@ -93,7 +92,7 @@ class Gateway extends AbstractGateway
     /**
      * Set Callback URLs associative array (approved, declined, cancelled)
      */
-    public function setCallbackUrls(array $value): self
+    public function setCallbackUrls(mixed $value): self
     {
         return $this->setParameter('callbackUrls', $value);
     }

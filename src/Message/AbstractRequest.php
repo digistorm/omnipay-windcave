@@ -7,8 +7,8 @@ namespace Omnipay\Windcave\Message;
 use GuzzleHttp\Psr7\Response;
 use Money\Money;
 use Omnipay\Common\Message\AbstractRequest as CommonAbstractRequest;
-use Omnipay\Common\Message\ResponseInterface;
 use Omnipay\Common\Message\AbstractResponse as CommonAbstractResponse;
+use Omnipay\Common\Message\ResponseInterface;
 
 /**
  * @link https://www.windcave.com.au/rest-docs/index.html
@@ -18,6 +18,7 @@ abstract class AbstractRequest extends CommonAbstractRequest
     protected string $endpoint = 'https://{{environment}}.windcave.com/api/v1';
 
     abstract public function getEndpoint(): string;
+
     abstract public function getResponseClass(): string;
 
     protected function baseEndpoint(): string
@@ -49,7 +50,7 @@ abstract class AbstractRequest extends CommonAbstractRequest
     /**
      * Get Callback URLs associative array (approved, declined, cancelled)
      */
-    public function getCallbackUrls(): array
+    public function getCallbackUrls(): mixed
     {
         return $this->getParameter('callbackUrls');
     }
@@ -57,7 +58,7 @@ abstract class AbstractRequest extends CommonAbstractRequest
     /**
      * Set Callback URLs associative array (approved, declined, cancelled)
      */
-    public function setCallbackUrls(array $value): self
+    public function setCallbackUrls(mixed $value): self
     {
         return $this->setParameter('callbackUrls', $value);
     }
@@ -174,14 +175,17 @@ abstract class AbstractRequest extends CommonAbstractRequest
             $responseData = json_decode($responseData, true);
         }
 
-        /** @var AbstractResponse&CommonAbstractResponse&Response $response */
         $response = new $responseClass($this, $responseData);
-        $this->response = $response;
+
+        /** @var Response $response */
+        $statusCode = $response->getStatusCode();
 
         // save additional info
-        $this->response->setHttpResponseCode((string)$response->getStatusCode());
+        /** @var AbstractResponse $response */
+        $response->setHttpResponseCode((string) $statusCode);
+        $response->setHeaders($response->getHeaders());
 
-        $this->response->setHeaders($response->getHeaders());
+        $this->response = $response;
 
         return $this->response;
     }

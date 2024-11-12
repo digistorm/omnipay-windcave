@@ -38,9 +38,9 @@ class CreateSessionRequestTest extends TestCase
         $data = $this->request->getData();
 
         $this->assertEquals('purchase', $data['type']);
-        $this->assertEquals('10.00',    $data['amount']);
-        $this->assertEquals('NZD',      $data['currency']);
-        $this->assertEquals('ABC123',   $data['merchantReference']);
-        $this->assertEquals(0,          $data['storeCard']);
+        $this->assertEquals('10.00', $data['amount']);
+        $this->assertEquals('NZD', $data['currency']);
+        $this->assertEquals('ABC123', $data['merchantReference']);
+        $this->assertEquals(0, $data['storeCard']);
     }
 }

@@ -17,7 +17,7 @@ class AbstractResponse extends CommonAbstractResponse
 
     /**
      * Is the transaction successful?
-     * @return boolean True if successful
+     * @return bool True if successful
      */
     public function isSuccessful(): bool
     {
@@ -74,9 +74,9 @@ class AbstractResponse extends CommonAbstractResponse
     /**
      * Set HTTP Response Code
      */
-    public function setHttpResponseCode(string $value): self
+    public function setHttpResponseCode(string|int $value): self
     {
-        $this->httpResponseCode = $value;
+        $this->httpResponseCode = (string) $value;
 
         return $this;
     }
@@ -100,6 +100,7 @@ class AbstractResponse extends CommonAbstractResponse
     {
         if (!$this->isSuccessful()) {
             $errors = $this->getDataItemArray('errors');
+
             return empty($errors[0]['message']) ? 'Unknown error' : $errors[0]['message'];
         }
 

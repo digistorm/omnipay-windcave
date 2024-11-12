@@ -8,6 +8,7 @@ declare(strict_types=1);
  * Date: 18/06/17
  * Time: 21:30
  */
+
 namespace Omnipay\Windcave\Test\Message;
 
 use Omnipay\Common\CreditCard;
@@ -24,12 +25,10 @@ class PurchaseRequestTest extends TestCase
         $this->request = new PurchaseRequest($this->getHttpClient(), $this->getHttpRequest());
     }
 
-    /**
-     * @expectedException \Omnipay\Common\Exception\InvalidRequestException
-     * @expectedExceptionMessage You must pass a "card" parameter.
-     */
     public function testGetDataInvalid(): void
     {
+        $this->expectExceptionMessage('You must pass a "card" parameter.');
+        $this->expectException(\Omnipay\Common\Exception\InvalidRequestException::class);
         $this->request->setCard(null);
 
         $this->request->getData();
@@ -47,19 +46,17 @@ class PurchaseRequestTest extends TestCase
 
         $data = $this->request->getData();
 
-        parse_str((string) $data, $dataArray);
-
         $expiryMonth = sprintf('%02d', $card['expiryMonth']);
         $expiryYear = substr((string) $card['expiryYear'], -2);
         $name = $card['firstName'] . ' ' . $card['lastName'];
 
-        $this->assertEquals($card['number'],    $dataArray['CardNumber']);
-        $this->assertEquals($expiryMonth,       $dataArray['ExpiryMonth']);
-        $this->assertEquals($expiryYear,        $dataArray['ExpiryYear']);
-        $this->assertEquals($name,              $dataArray['CardHolderName']);
-        $this->assertEquals($card['cvv'],       $dataArray['Cvc2']);
+        $this->assertEquals($card['number'], $data['CardNumber']);
+        $this->assertEquals($expiryMonth, $data['ExpiryMonth']);
+        $this->assertEquals($expiryYear, $data['ExpiryYear']);
+        $this->assertEquals($name, $data['CardHolderName']);
+        $this->assertEquals($card['cvv'], $data['Cvc2']);
         // Ensure the description is limited to 64 chars
-        $this->assertEquals('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do ', $dataArray['MerchantReference']);
+        $this->assertEquals('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do ', $data['MerchantReference']);
 
         $this->assertEquals($formPostEndpoint, $this->request->getEndpoint());
     }

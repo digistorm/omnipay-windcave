@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Omnipay\Windcave\Test\Message;
 
 use Omnipay\Tests\TestCase;
-use Omnipay\Windcave\Message\CreateSessionRequest;
-use Omnipay\Windcave\Message\CreateSessionResponse;
 use Omnipay\Windcave\Message\GetSessionRequest;
 use Omnipay\Windcave\Message\GetSessionResponse;
 
@@ -76,7 +74,6 @@ class GetSessionResponseTest extends TestCase
         $this->assertEquals(true, $response->getTransactionAuthorised());
         $this->assertEquals('00', $response->getCode());
         $this->assertEquals('APPROVED', $response->getMessage());
-
     }
 
     public function testErrorResponse(): void
