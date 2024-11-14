@@ -11,10 +11,7 @@ use Omnipay\Windcave\Message\CreateSessionRequest;
 
 class CreateSessionRequestTest extends TestCase
 {
-    /**
-     * @var CreateSessionRequest
-     */
-    protected $request;
+    protected CreateSessionRequest $request;
 
     public function setUp(): void
     {

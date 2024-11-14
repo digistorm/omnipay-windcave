@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Omnipay\Windcave\Message;
 
+use InvalidArgumentException;
+
 class PurchaseResponse extends AbstractResponse
 {
     public function isSuccessful(): bool
@@ -17,7 +19,7 @@ class PurchaseResponse extends AbstractResponse
     {
         $item = $this->getLocationAttribute()[$key] ?? null;
         if (!(is_scalar($item) || is_null($item))) {
-            throw new \InvalidArgumentException("Data item $key is not a scalar value");
+            throw new InvalidArgumentException("Data item $key is not a scalar value");
         }
 
         return $item;

@@ -9,10 +9,7 @@ use Omnipay\Windcave\Message\GetSessionRequest;
 
 class GetSessionRequestTest extends TestCase
 {
-    /**
-     * @var GetSessionRequest
-     */
-    protected $request;
+    protected GetSessionRequest $request;
 
     public function setUp(): void
     {

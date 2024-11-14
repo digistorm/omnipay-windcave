@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Omnipay\Windcave\Message;
 
+use InvalidArgumentException;
+
 class GetSessionResponse extends AbstractResponse
 {
     public function getSessionId(): ?string
@@ -54,7 +56,7 @@ class GetSessionResponse extends AbstractResponse
     {
         $item = $this->getTransactionData()[$key] ?? null;
         if (!(is_scalar($item) || is_null($item))) {
-            throw new \InvalidArgumentException("Data item $key is not a scalar value");
+            throw new InvalidArgumentException("Data item $key is not a scalar value");
         }
 
         return $item;
