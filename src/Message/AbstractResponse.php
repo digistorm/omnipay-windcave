@@ -1,91 +1,108 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\Windcave\Message;
+
+use InvalidArgumentException;
+use Omnipay\Common\Message\AbstractResponse as CommonAbstractResponse;
 
 /**
  * Response class for all Windcave requests
  */
-class AbstractResponse extends \Omnipay\Common\Message\AbstractResponse
+class AbstractResponse extends CommonAbstractResponse
 {
-    /** @var string HTTP response code */
-    protected $httpResponseCode = null;
+    protected string $httpResponseCode;
 
-    protected $headers = [];
+    protected array $headers = [];
 
     /**
      * Is the transaction successful?
-     * @return boolean True if successful
+     * @return bool True if successful
      */
-    public function isSuccessful()
+    public function isSuccessful(): bool
     {
         // get response code
         $code = $this->getHttpResponseCode();
 
-        return ($code === 200 || $code === 201);
+        return ($code === '200' || $code === '201');
     }
 
     /**
      * Is the transaction still processing? We will need to fetch it again
-     * @return bool
      */
-    public function isPending()
+    public function isPending(): bool
     {
-        return $this->getHttpResponseCode() === 202;
+        return $this->getHttpResponseCode() === '202';
+    }
+
+    public function getDataItemArray(string $key): ?array
+    {
+        $item = $this->getData()[$key] ?? null;
+        if (!(is_array($item) || is_null($item))) {
+            throw new InvalidArgumentException("Data item $key is not an array");
+        }
+
+        return $item;
+    }
+
+    public function getDataItem(string $key): bool|string|int|float|null
+    {
+        $item = $this->getData()[$key] ?? null;
+        if (!(is_scalar($item) || is_null($item))) {
+            throw new InvalidArgumentException("Data item $key is not a scalar value");
+        }
+
+        return $item;
     }
 
     /**
      * Get response data, optionally by key
-     * @param  string       $key Data array key
-     * @return string|array      Response data item or all data if no key specified
      */
-    public function getData($key = null)
+    public function getData(): array
     {
-        if ($key) {
-            return isset($this->data[$key]) ? $this->data[$key] : null;
-        }
         return $this->data;
     }
 
     /**
      * Get HTTP Response Code
-     * @return string
      */
-    public function getHttpResponseCode()
+    public function getHttpResponseCode(): string
     {
         return $this->httpResponseCode;
     }
 
     /**
      * Set HTTP Response Code
-     * @param $value
      */
-    public function setHttpResponseCode($value)
+    public function setHttpResponseCode(string|int $value): self
     {
-        $this->httpResponseCode = $value;
+        $this->httpResponseCode = (string) $value;
+
+        return $this;
     }
 
     /**
      * Get headers array
-     * @return array
      */
-    public function getHeaders()
+    public function getHeaders(): array
     {
         return $this->headers;
     }
 
-    /**
-     * @param array $value
-     */
-    public function setHeaders(array $value)
+    public function setHeaders(array $value): self
     {
         $this->headers = $value;
+
+        return $this;
     }
 
-    public function getMessage()
+    public function getMessage(): string
     {
         if (!$this->isSuccessful()) {
-            $errors = $this->getData('errors');
-            return !empty($errors[0]['message']) ? $errors[0]['message'] : 'Unknown error';
+            $errors = $this->getDataItemArray('errors');
+
+            return empty($errors[0]['message']) ? 'Unknown error' : $errors[0]['message'];
         }
 
         return 'Success';

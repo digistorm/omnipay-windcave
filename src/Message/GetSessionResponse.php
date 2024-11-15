@@ -1,61 +1,73 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\Windcave\Message;
+
+use InvalidArgumentException;
 
 class GetSessionResponse extends AbstractResponse
 {
-    public function getSessionId()
+    public function getSessionId(): ?string
     {
-        return $this->getData('id');
+        return (string) $this->getDataItem('id');
     }
 
-    public function getState()
+    public function getState(): ?string
     {
-        return $this->getData('state');
+        return (string) $this->getDataItem('state');
     }
 
-    public function getMerchantReference()
+    public function getMerchantReference(): ?string
     {
-        return $this->getData('merchantReference');
+        return (string) $this->getDataItem('merchantReference');
     }
 
-    public function getTransactionId()
+    public function getTransactionId(): ?string
     {
-        return $this->getTransactionData('id');
+        return (string) $this->getTransactionDataItem('id');
     }
 
-    public function getTransactionAuthorised()
+    public function getTransactionAuthorised(): bool
     {
-        return $this->getTransactionData('authorised');
+        return (bool) $this->getTransactionDataItem('authorised');
     }
 
-    public function getCode()
+    public function getCode(): ?string
     {
-        return $this->getTransactionData('reCo');
+        return (string) $this->getTransactionDataItem('reCo');
     }
 
-    public function getSettlementDate()
+    public function getSettlementDate(): ?string
     {
-        return $this->getTransactionData('settlementDate');
+        return (string) $this->getTransactionDataItem('settlementDate');
     }
 
-    public function getMessage()
+    public function getMessage(): string
     {
         if ($this->isSuccessful()) {
-            return $this->getTransactionData('responseText');
+            return (string) $this->getTransactionDataItem('responseText');
         }
 
         return parent::getMessage();
     }
 
-    protected function getTransactionData($key)
+    protected function getTransactionDataItem(string $key): bool|string|int|float|null
+    {
+        $item = $this->getTransactionData()[$key] ?? null;
+        if (!(is_scalar($item) || is_null($item))) {
+            throw new InvalidArgumentException("Data item $key is not a scalar value");
+        }
+
+        return $item;
+    }
+
+    protected function getTransactionData(): ?array
     {
         if (empty($this->data['transactions'][0]) || !is_array($this->data['transactions'][0])) {
             return null;
         }
 
-        $transaction = $this->data['transactions'][0];
-
-        return isset($transaction[$key]) ? $transaction[$key] : null;
+        return $this->data['transactions'][0];
     }
 }

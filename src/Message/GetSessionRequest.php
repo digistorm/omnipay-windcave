@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\Windcave\Message;
 
 use Omnipay\Common\Message\RequestInterface;
@@ -9,43 +11,37 @@ use Omnipay\Common\Message\RequestInterface;
  */
 class GetSessionRequest extends AbstractRequest implements RequestInterface
 {
-    public function getSessionId()
+    public function getSessionId(): ?string
     {
         return $this->getParameter('sessionId');
     }
 
-    public function setSessionId($value)
+    public function setSessionId(string $value): self
     {
         return $this->setParameter('sessionId', $value);
     }
 
-    /**
-     * @return array|mixed
-     */
-    public function getData()
+    public function getData(): array
     {
-        return null;
+        return [];
     }
 
-    /**
-     * @return mixed
-     */
-    public function getEndpoint()
+    public function getEndpoint(): string
     {
         return $this->baseEndpoint() . '/sessions/' . $this->getSessionId();
     }
 
-    public function getHttpMethod()
+    public function getHttpMethod(): string
     {
         return 'GET';
     }
 
-    public function getContentType()
+    public function getContentType(): string
     {
         return 'application/json';
     }
 
-    public function getResponseClass()
+    public function getResponseClass(): string
     {
         return GetSessionResponse::class;
     }

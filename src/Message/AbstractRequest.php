@@ -1,139 +1,146 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\Windcave\Message;
+
+use GuzzleHttp\Psr7\Response;
+use Money\Money;
+use Omnipay\Common\Message\AbstractRequest as CommonAbstractRequest;
+use Omnipay\Common\Message\AbstractResponse as CommonAbstractResponse;
+use Omnipay\Common\Message\ResponseInterface;
 
 /**
  * @link https://www.windcave.com.au/rest-docs/index.html
  */
-abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
+abstract class AbstractRequest extends CommonAbstractRequest
 {
-    /** @var string Endpoint URL */
-    protected $endpoint = 'https://{{environment}}.windcave.com/api/v1';
+    protected string $endpoint = 'https://{{environment}}.windcave.com/api/v1';
 
-    abstract public function getEndpoint();
-    abstract public function getResponseClass();
+    abstract public function getEndpoint(): string;
 
-    protected function baseEndpoint()
+    abstract public function getResponseClass(): string;
+
+    protected function baseEndpoint(): string
     {
         return str_replace('{{environment}}', $this->getTestMode() ? 'uat' : 'sec', $this->endpoint);
     }
 
-    protected function wantsJson()
+    protected function wantsJson(): bool
     {
         return true;
     }
 
     /**
      * Get API publishable key
-     * @return string
      */
-    public function getApiKey()
+    public function getApiKey(): ?string
     {
         return $this->getParameter('apiKey');
     }
 
     /**
      * Set API publishable key
-     * @param  string $value API publishable key
      */
-    public function setApiKey($value)
+    public function setApiKey(string $value): self
     {
         return $this->setParameter('apiKey', $value);
     }
 
     /**
      * Get Callback URLs associative array (approved, declined, cancelled)
-     * @return array
      */
-    public function getCallbackUrls()
+    public function getCallbackUrls(): mixed
     {
         return $this->getParameter('callbackUrls');
     }
 
     /**
      * Set Callback URLs associative array (approved, declined, cancelled)
-     * @param array $value
      */
-    public function setCallbackUrls($value)
+    public function setCallbackUrls(mixed $value): self
     {
         return $this->setParameter('callbackUrls', $value);
     }
 
     /**
      * Get Merchant
-     * @return string Merchant ID
      */
-    public function getUsername()
+    public function getUsername(): string
     {
         return $this->getParameter('username');
     }
 
     /**
      * Set Merchant
-     * @param  string $value Merchant ID
      */
-    public function setUsername($value)
+    public function setUsername(string $value): self
     {
         return $this->setParameter('username', $value);
     }
 
-    public function getAmount()
+    public function getAmount(): string|Money|null
     {
         return $this->getParameter('amount');
     }
 
-    public function setAmount($value)
+    /**
+     * Retaining the original method signature
+     * @param string|Money $value
+     * @return self
+     */
+    public function setAmount($value): self
     {
         return $this->setParameter('amount', $value);
     }
 
-    public function getCurrency()
+    public function getCurrency(): ?string
     {
         return $this->getParameter('currency');
     }
 
-    public function setCurrency($value)
+    /**
+     * Retaining the original method signature
+     * @param string $value
+     * @return self
+     */
+    public function setCurrency($value): self
     {
         return $this->setParameter('currency', $value);
     }
 
-    public function getMerchantReference()
+    public function getMerchantReference(): string
     {
         return $this->getParameter('merchantReference');
     }
 
-    public function setMerchantReference($value)
+    public function setMerchantReference(string $value): self
     {
         return $this->setParameter('merchantReference', $value);
     }
 
-    abstract public function getContentType();
+    abstract public function getContentType(): ?string;
 
-    public function setContentType($value)
+    public function setContentType(string $value): self
     {
         return $this->setParameter('contentType', $value);
     }
 
     /**
      * Get HTTP method
-     * @return string HTTP method (GET, PUT, etc)
      */
-    public function getHttpMethod()
+    public function getHttpMethod(): string
     {
         return 'GET';
     }
 
     /**
      * Get request headers
-     * @return array Request headers
      */
-    public function getRequestHeaders()
+    public function getRequestHeaders(): array
     {
         // common headers
-        $headers = array(
-            'Content-Type' => $this->getContentType(),
-            'User-Agent' => 'PostmanRuntime/7.17.1',
-        );
+        $headers = ['Content-Type' => $this->getContentType(), 'User-Agent' => 'PostmanRuntime/7.17.1'];
 
         if ($this->wantsJson()) {
             $headers['Accept'] = 'application/json';
@@ -144,12 +151,8 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 
     /**
      * Send data request
-     *
-     * @param $body
-     *
-     * @return \Omnipay\Common\Message\ResponseInterface|\Omnipay\Windcave\Message\Response
      */
-    public function sendData($body)
+    public function sendData(mixed $data): ResponseInterface
     {
         $username = $this->getUsername();
         $apiKey = $this->getApiKey();
@@ -161,23 +164,28 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
             $this->getHttpMethod(),
             $this->getEndpoint(),
             $headers,
-            $body
+            $data
         );
 
         $responseClass = $this->getResponseClass();
 
-        $data = $response->getBody()->getContents();
+        $responseData = $response->getBody()->getContents();
 
         if ($this->wantsJson()) {
-            $data = json_decode($data, true);
+            $responseData = json_decode($responseData, true);
         }
 
-        $this->response = new $responseClass($this, $data);
+        $response = new $responseClass($this, $responseData);
+
+        /** @var Response $response */
+        $statusCode = $response->getStatusCode();
 
         // save additional info
-        $this->response->setHttpResponseCode($response->getStatusCode());
+        /** @var AbstractResponse $response */
+        $response->setHttpResponseCode((string) $statusCode);
+        $response->setHeaders($response->getHeaders());
 
-        $this->response->setHeaders($response->getHeaders());
+        $this->response = $response;
 
         return $this->response;
     }

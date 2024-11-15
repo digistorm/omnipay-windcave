@@ -1,42 +1,45 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\Windcave;
 
 use Omnipay\Common\AbstractGateway;
+use Omnipay\Common\Message\AbstractRequest;
+use Omnipay\Common\Message\RequestInterface;
 use Omnipay\Windcave\Message\CreateSessionRequest;
 use Omnipay\Windcave\Message\GetSessionRequest;
 use Omnipay\Windcave\Message\PurchaseRequest;
 
 /**
- * @method \Omnipay\Common\Message\RequestInterface authorize(array $options = array())         (Optional method)
- *         Authorize an amount on the customers card
- * @method \Omnipay\Common\Message\RequestInterface completeAuthorize(array $options = array()) (Optional method)
- *         Handle return from off-site gateways after authorization
- * @method \Omnipay\Common\Message\RequestInterface capture(array $options = array())           (Optional method)
- *         Capture an amount you have previously authorized
- * @method \Omnipay\Common\Message\RequestInterface completePurchase(array $options = array())  (Optional method)
- *         Handle return from off-site gateways after purchase
- * @method \Omnipay\Common\Message\RequestInterface refund(array $options = array())            (Optional method)
- *         Refund an already processed transaction
- * @method \Omnipay\Common\Message\RequestInterface void(array $options = array())              (Optional method)
- *         Generally can only be called up to 24 hours after submitting a transaction
- * @method \Omnipay\Common\Message\RequestInterface createCard(array $options = array())        (Optional method)
- *         The returned response object includes a cardReference, which can be used for future transactions
- * @method \Omnipay\Common\Message\RequestInterface updateCard(array $options = array())        (Optional method)
- *         Update a stored card
- * @method \Omnipay\Common\Message\RequestInterface deleteCard(array $options = array())        (Optional method)
- *         Delete a stored card
+ * @method RequestInterface authorize(array $options = []) (Optional method)
+ * Authorize an amount on the customers card
+ * @method RequestInterface completeAuthorize(array $options = []) (Optional method)
+ * Handle return from off-site gateways after authorization
+ * @method RequestInterface capture(array $options = []) (Optional method)
+ * Capture an amount you have previously authorized
+ * @method RequestInterface completePurchase(array $options = []) (Optional method)
+ * Handle return from off-site gateways after purchase
+ * @method RequestInterface refund(array $options = []) (Optional method)
+ * Refund an already processed transaction
+ * @method RequestInterface void(array $options = []) (Optional method)
+ * Generally can only be called up to 24 hours after submitting a transaction
+ * @method RequestInterface createCard(array $options = []) (Optional method)
+ * The returned response object includes a cardReference, which can be used for future transactions
+ * @method RequestInterface updateCard(array $options = []) (Optional method)
+ * Update a stored card
+ * @method RequestInterface deleteCard(array $options = []) (Optional method)
+ * Delete a stored card
  */
 class Gateway extends AbstractGateway
 {
-
     /**
      * Get gateway display name
      *
      * This can be used by carts to get the display name for each gateway.
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return 'Windcave REST API';
     }
@@ -48,74 +51,64 @@ class Gateway extends AbstractGateway
      * to create new instances of this gateway.
      * @return string
      */
-    public function getShortName()
+    public function getShortName(): string
     {
         return 'Windcave';
     }
 
-    public function getDefaultParameters()
+    public function getDefaultParameters(): array
     {
-        return array(
-            'apiKey' => '',
-            'username'   => '',
-            'callbackUrls' => [
-                'approved' => 'http://example.com?status=approved',
-                'declined' => 'http://example.com?status=declined',
-                'cancelled' => 'http://example.com?status=cancelled',
-            ],
-        );
+        return ['apiKey' => '', 'username' => '', 'callbackUrls' => [
+            'approved' => 'http://example.com?status=approved',
+            'declined' => 'http://example.com?status=declined',
+            'cancelled' => 'http://example.com?status=cancelled',
+        ]];
     }
 
     /**
      * Get API publishable key
-     * @return string
      */
-    public function getApiKey()
+    public function getApiKey(): ?string
     {
         return $this->getParameter('apiKey');
     }
 
     /**
      * Set API publishable key
-     * @param  string $value API publishable key
      */
-    public function setApiKey($value)
+    public function setApiKey(string $value): self
     {
         return $this->setParameter('apiKey', $value);
     }
 
     /**
      * Get Callback URLs associative array (approved, declined, cancelled)
-     * @return array
      */
-    public function getCallbackUrls()
+    public function getCallbackUrls(): mixed
     {
         return $this->getParameter('callbackUrls');
     }
 
     /**
      * Set Callback URLs associative array (approved, declined, cancelled)
-     * @param array $value
      */
-    public function setCallbackUrls($value)
+    public function setCallbackUrls(mixed $value): self
     {
         return $this->setParameter('callbackUrls', $value);
     }
 
     /**
      * Get Merchant
-     * @return string Merchant ID
      */
-    public function getUsername()
+    public function getUsername(): ?string
     {
         return $this->getParameter('username');
     }
 
     /**
      * Set Merchant
-     * @param  string $value Merchant ID
      */
-    public function setUsername($value)
+    public function setUsername(string $value): self
     {
         return $this->setParameter('username', $value);
     }
@@ -123,33 +116,26 @@ class Gateway extends AbstractGateway
     /**
      * Purchase request
      *
-     * @param array $parameters
-     * @return \Omnipay\Windcave\Message\PurchaseRequest|\Omnipay\Common\Message\AbstractRequest
+     * @return PurchaseRequest|AbstractRequest
      */
-    public function purchase(array $parameters = array())
+    public function purchase(array $options = []): AbstractRequest
     {
-        return $this->createRequest(PurchaseRequest::class, $parameters);
+        return $this->createRequest(PurchaseRequest::class, $options);
     }
 
     /**
      * Create sessionId with a CreditCard
-     *
-     * @param array $parameters
-     * @return \Omnipay\Windcave\Message\CreateSessionRequest|\Omnipay\Common\Message\AbstractRequest
      */
-    public function createSession(array $parameters = array())
+    public function createSession(array $options = []): AbstractRequest
     {
-        return $this->createRequest(CreateSessionRequest::class, $parameters);
+        return $this->createRequest(CreateSessionRequest::class, $options);
     }
 
     /**
      * Create sessionId with a CreditCard
-     *
-     * @param array $parameters
-     * @return \Omnipay\Windcave\Message\GetSessionRequest|\Omnipay\Common\Message\AbstractRequest
      */
-    public function getSession(array $parameters = array())
+    public function getSession(array $options = []): AbstractRequest
     {
-        return $this->createRequest(GetSessionRequest::class, $parameters);
+        return $this->createRequest(GetSessionRequest::class, $options);
     }
 }

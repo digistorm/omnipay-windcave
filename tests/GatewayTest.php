@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\Windcave\Test;
 
 use Money\Currencies\ISOCurrencies;
@@ -18,7 +20,7 @@ use Omnipay\Windcave\Message\PurchaseRequest;
  */
 class GatewayTest extends GatewayTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -26,7 +28,7 @@ class GatewayTest extends GatewayTestCase
         $this->gateway->setTestMode(true);
     }
 
-    public function testCreateSessionUsingStringAmount()
+    public function testCreateSessionUsingStringAmount(): void
     {
         $request = $this->gateway->createSession([
             'amount' => '10.00',
@@ -39,12 +41,12 @@ class GatewayTest extends GatewayTestCase
 
         $data = $request->getData();
 
-        $this->assertEquals('10.00',   $data['amount']);
-        $this->assertEquals('AUD',     $data['currency']);
-        $this->assertEquals('ABC123',  $data['merchantReference']);
+        $this->assertEquals('10.00', $data['amount']);
+        $this->assertEquals('AUD', $data['currency']);
+        $this->assertEquals('ABC123', $data['merchantReference']);
     }
 
-    public function testCreateSessionUsingMoney()
+    public function testCreateSessionUsingMoney(): void
     {
         $request = $this->gateway->createSession([
             'currency' => 'AUD',
@@ -61,12 +63,12 @@ class GatewayTest extends GatewayTestCase
 
         $data = $request->getData();
 
-        $this->assertEquals('10.00',   $data['amount']);
-        $this->assertEquals('AUD',     $data['currency']);
-        $this->assertEquals('ABC123',  $data['merchantReference']);
+        $this->assertEquals('10.00', $data['amount']);
+        $this->assertEquals('AUD', $data['currency']);
+        $this->assertEquals('ABC123', $data['merchantReference']);
     }
 
-    public function testGetSession()
+    public function testGetSession(): void
     {
         $request = $this->gateway->getSession([
             'sessionId' => 'SESS01234',
@@ -76,7 +78,7 @@ class GatewayTest extends GatewayTestCase
 
         $data = $request->getData();
 
-        $this->assertNull($data);
+        $this->assertEmpty($data);
 
         $request->setTestMode(true);
         $this->assertSame('https://uat.windcave.com/api/v1/sessions/SESS01234', $request->getEndpoint());
@@ -84,7 +86,7 @@ class GatewayTest extends GatewayTestCase
         $this->assertSame('https://sec.windcave.com/api/v1/sessions/SESS01234', $request->getEndpoint());
     }
 
-    public function testPurchase()
+    public function testPurchase(): void
     {
         $request = $this->gateway->purchase([
             'card' => new CreditCard([
@@ -92,7 +94,7 @@ class GatewayTest extends GatewayTestCase
                 'lastName' => 'Doe',
                 'number' => '424242424242',
                 'expiryMonth' => '03',
-                'expiryYear' => '2020',
+                'expiryYear' => date('Y', strtotime('+1 year')),
                 'cvv' => '123',
             ]),
         ]);
@@ -100,10 +102,10 @@ class GatewayTest extends GatewayTestCase
         $this->assertInstanceOf(PurchaseRequest::class, $request);
         $data = $request->getData();
 
-        $this->assertEquals('424242424242',         $data['CardNumber']);
-        $this->assertEquals('John Doe',             $data['CardHolderName']);
-        $this->assertEquals('123',                  $data['Cvc2']);
-        $this->assertEquals('03',                   $data['ExpiryMonth']);
-        $this->assertEquals('20',                   $data['ExpiryYear']);
+        $this->assertEquals('424242424242', $data['CardNumber']);
+        $this->assertEquals('John Doe', $data['CardHolderName']);
+        $this->assertEquals('123', $data['Cvc2']);
+        $this->assertEquals('03', $data['ExpiryMonth']);
+        $this->assertEquals(date('y', strtotime('+1 year')), $data['ExpiryYear']);
     }
 }

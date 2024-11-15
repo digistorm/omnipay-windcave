@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Created by PhpStorm.
  * User: pedro
@@ -14,29 +17,24 @@ use Omnipay\Windcave\Message\PurchaseRequest;
 
 class PurchaseRequestTest extends TestCase
 {
-    /**
-     * @var PurchaseRequest $request
-     */
-    private $request;
+    private PurchaseRequest $request;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->request = new PurchaseRequest($this->getHttpClient(), $this->getHttpRequest());
     }
 
-    /**
-     * @expectedException \Omnipay\Common\Exception\InvalidRequestException
-     * @expectedExceptionMessage You must pass a "card" parameter.
-     */
-    public function testGetDataInvalid()
+    public function testGetDataInvalid(): void
     {
+        $this->expectExceptionMessage('You must pass a "card" parameter.');
+        $this->expectException(\Omnipay\Common\Exception\InvalidRequestException::class);
         $this->request->setCard(null);
 
         $this->request->getData();
     }
 
-    public function testGetDataWithCard()
+    public function testGetDataWithCard(): void
     {
         $card = $this->getValidCard();
         $this->request->setCard(new CreditCard($card));
@@ -48,19 +46,17 @@ class PurchaseRequestTest extends TestCase
 
         $data = $this->request->getData();
 
-        parse_str($data, $dataArray);
-
         $expiryMonth = sprintf('%02d', $card['expiryMonth']);
-        $expiryYear = substr($card['expiryYear'], -2);
+        $expiryYear = substr((string) $card['expiryYear'], -2);
         $name = $card['firstName'] . ' ' . $card['lastName'];
 
-        $this->assertEquals($card['number'],    $dataArray['CardNumber']);
-        $this->assertEquals($expiryMonth,       $dataArray['ExpiryMonth']);
-        $this->assertEquals($expiryYear,        $dataArray['ExpiryYear']);
-        $this->assertEquals($name,              $dataArray['CardHolderName']);
-        $this->assertEquals($card['cvv'],       $dataArray['Cvc2']);
+        $this->assertEquals($card['number'], $data['CardNumber']);
+        $this->assertEquals($expiryMonth, $data['ExpiryMonth']);
+        $this->assertEquals($expiryYear, $data['ExpiryYear']);
+        $this->assertEquals($name, $data['CardHolderName']);
+        $this->assertEquals($card['cvv'], $data['Cvc2']);
         // Ensure the description is limited to 64 chars
-        $this->assertEquals('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do ', $dataArray['MerchantReference']);
+        $this->assertEquals('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do ', $data['MerchantReference']);
 
         $this->assertEquals($formPostEndpoint, $this->request->getEndpoint());
     }

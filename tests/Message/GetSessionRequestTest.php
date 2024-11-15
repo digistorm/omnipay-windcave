@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\Windcave\Test\Message;
 
 use Omnipay\Tests\TestCase;
@@ -7,19 +9,16 @@ use Omnipay\Windcave\Message\GetSessionRequest;
 
 class GetSessionRequestTest extends TestCase
 {
-    /**
-     * @var \Omnipay\Windcave\Message\GetSessionRequest
-     */
-    protected $request;
+    protected GetSessionRequest $request;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->request = new GetSessionRequest($this->getHttpClient(), $this->getHttpRequest());
 
         $this->request->setSessionId('SESS01234');
     }
 
-    public function testEndpoint()
+    public function testEndpoint(): void
     {
         $this->request->setTestMode(true);
         $this->assertSame('https://uat.windcave.com/api/v1/sessions/SESS01234', $this->request->getEndpoint());
@@ -27,8 +26,8 @@ class GetSessionRequestTest extends TestCase
         $this->assertSame('https://sec.windcave.com/api/v1/sessions/SESS01234', $this->request->getEndpoint());
     }
 
-    public function testGetData()
+    public function testGetData(): void
     {
-        $this->assertNull($this->request->getData());
+        $this->assertEmpty($this->request->getData());
     }
 }
