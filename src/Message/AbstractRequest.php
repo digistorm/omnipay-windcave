@@ -161,25 +161,25 @@ abstract class AbstractRequest extends CommonAbstractRequest
         $headers = $this->getRequestHeaders();
         $headers['Authorization'] = 'Basic ' . base64_encode($username . ':' . $apiKey);
 
-        $response = $this->httpClient->request(
+        $body = json_encode($data) ?: null;
+
+        $httpResponse = $this->httpClient->request(
             $this->getHttpMethod(),
             $this->getEndpoint(),
             $headers,
-            $data
+            $body
         );
 
         $responseClass = $this->getResponseClass();
 
-        $responseData = $response->getBody()->getContents();
+        $responseData = $httpResponse->getBody()->getContents();
+        $statusCode = $httpResponse->getStatusCode();
 
         if ($this->wantsJson()) {
             $responseData = json_decode($responseData, true);
         }
 
         $response = new $responseClass($this, $responseData);
-
-        /** @var Response $response */
-        $statusCode = $response->getStatusCode();
 
         // save additional info
         /** @var AbstractResponse $response */
