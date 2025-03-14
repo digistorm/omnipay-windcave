@@ -7,7 +7,6 @@ namespace Omnipay\Windcave\Message;
 use GuzzleHttp\Psr7\Response;
 use Money\Money;
 use Omnipay\Common\Message\AbstractRequest as CommonAbstractRequest;
-use Omnipay\Common\Message\AbstractResponse as CommonAbstractResponse;
 use Omnipay\Common\Message\ResponseInterface;
 
 /**
@@ -140,7 +139,9 @@ abstract class AbstractRequest extends CommonAbstractRequest
     public function getRequestHeaders(): array
     {
         // common headers
-        $headers = ['Content-Type' => $this->getContentType(), 'User-Agent' => 'PostmanRuntime/7.17.1'];
+        $headers = [
+            'Content-Type' => $this->getContentType(), 
+        ];
 
         if ($this->wantsJson()) {
             $headers['Accept'] = 'application/json';
