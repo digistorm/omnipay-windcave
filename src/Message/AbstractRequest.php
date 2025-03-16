@@ -7,7 +7,6 @@ namespace Omnipay\Windcave\Message;
 use GuzzleHttp\Psr7\Response;
 use Money\Money;
 use Omnipay\Common\Message\AbstractRequest as CommonAbstractRequest;
-use Omnipay\Common\Message\AbstractResponse as CommonAbstractResponse;
 use Omnipay\Common\Message\ResponseInterface;
 
 /**
@@ -140,7 +139,9 @@ abstract class AbstractRequest extends CommonAbstractRequest
     public function getRequestHeaders(): array
     {
         // common headers
-        $headers = ['Content-Type' => $this->getContentType(), 'User-Agent' => 'PostmanRuntime/7.17.1'];
+        $headers = [
+            'Content-Type' => $this->getContentType(), 
+        ];
 
         if ($this->wantsJson()) {
             $headers['Accept'] = 'application/json';
@@ -160,25 +161,25 @@ abstract class AbstractRequest extends CommonAbstractRequest
         $headers = $this->getRequestHeaders();
         $headers['Authorization'] = 'Basic ' . base64_encode($username . ':' . $apiKey);
 
-        $response = $this->httpClient->request(
+        $body = json_encode($data) ?: null;
+
+        $httpResponse = $this->httpClient->request(
             $this->getHttpMethod(),
             $this->getEndpoint(),
             $headers,
-            $data
+            $body
         );
 
         $responseClass = $this->getResponseClass();
 
-        $responseData = $response->getBody()->getContents();
+        $responseData = $httpResponse->getBody()->getContents();
+        $statusCode = $httpResponse->getStatusCode();
 
         if ($this->wantsJson()) {
             $responseData = json_decode($responseData, true);
         }
 
         $response = new $responseClass($this, $responseData);
-
-        /** @var Response $response */
-        $statusCode = $response->getStatusCode();
 
         // save additional info
         /** @var AbstractResponse $response */
