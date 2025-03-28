@@ -61,6 +61,10 @@ class AbstractResponse extends CommonAbstractResponse
      */
     public function getData(): array
     {
+        // Sometimes the response is html, and in that case we don't process it.
+        if (is_string($this->data)) {
+            return [];
+        }
         return $this->data;
     }
 
