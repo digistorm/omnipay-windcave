@@ -161,7 +161,8 @@ abstract class AbstractRequest extends CommonAbstractRequest
         $headers = $this->getRequestHeaders();
         $headers['Authorization'] = 'Basic ' . base64_encode($username . ':' . $apiKey);
 
-        $body = json_encode($data) ?: null;
+        // If wantsJson is false assume $data is a string and pass it directly.
+        $body = (($this->wantsJson()) ? json_encode($data) : $data) ?: null;
 
         $httpResponse = $this->httpClient->request(
             $this->getHttpMethod(),
